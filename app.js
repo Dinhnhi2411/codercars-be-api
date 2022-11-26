@@ -3,7 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const indexRouter = require("./src/routes/index");
+const indexRouter = require("./routes/index");
 const mongoose = require('mongoose');
 require('dotenv/config');
 
