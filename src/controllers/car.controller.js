@@ -31,21 +31,19 @@ carController.createCar = async (req, res, next) => {
 carController.getCars = async (req, res, next) => {
   try {
     // YOUR CODE HERE
-  
+
     let { page, limit } = req.query;
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     let offset = limit * (page - 1);
 
     let listOfCar = await Car.find();
-   
+
     listOfCar = listOfCar.reverse().slice(offset, offset + limit);
     let totalCars = await Car.find({ isDeleted: false }).countDocuments();
     let total = Math.ceil(totalCars / limit);
 
     let data = { cars: listOfCar, page: page, total: total };
-
-
 
     sendResponse(res, 200, true, data, null, "Get All Cars Success");
   } catch (err) {
