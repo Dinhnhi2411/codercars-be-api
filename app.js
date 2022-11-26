@@ -3,7 +3,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const indexRouter = require('./routes/index');
+const indexRouter = require("./src/routes/index");
 const mongoose = require('mongoose');
 require('dotenv/config');
 
@@ -17,9 +17,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MONGODB
-mongoose.connect(process.env.MONGO_URI, () => {
-	console.log('Connected to Database!');
-});
+mongoose
+.connect(process.env.MONGO_URI)
+.then(()=> console.log("conected with mongodb"))
+.catch((e)=> console.log("Error mongodb conection", e));
+
+	
 
 app.use('/', indexRouter);
 
