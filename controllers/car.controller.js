@@ -7,23 +7,24 @@ const carController = {};
 // CREATE CARS
 
 carController.createCar = async (req, res, next) => {
-  // YOUR CODE HERE
-  const { make, model, transmission_type, size, style, release_date, price } =
-    req.body;
-  const info = {
-    make,
-    model,
-    transmission_type,
-    size,
-    style,
-    release_date,
-    price,
-  };
-  if (!info) throw new AppError(402, "Bad Request", "Create Car Error");
-  // const carObj = new Car(info);
-  // await carObj.save(function (err) {
   try {
-    const carObj = await Car.create(info);
+    // YOUR CODE HERE
+    const { make, model, release_date, transmission_type, size, style, price } =
+      req.body;
+
+    if (
+      !make ||
+      !model ||
+      !release_date ||
+      !transmission_type ||
+      !size ||
+      !style ||
+      !price
+    )
+      throw new AppError(402, "Bad Request", "Field name is not allowed");
+
+    const carObj = await Car.create(req.body);
+
     sendResponse(res, 200, true, { data: carObj }, null, "Create Car Success");
   } catch (err) {
     // YOUR CODE HERE
@@ -72,7 +73,7 @@ carController.editCar = async (req, res, next) => {
     price,
   };
   const { id } = req.params;
- 
+
   const options = { new: true };
 
   if (!Object.keys(info)) throw new Error("field is invalid");
@@ -92,7 +93,7 @@ carController.editCar = async (req, res, next) => {
 //  DELETE CARS
 
 carController.deleteCar = async (req, res, next) => {
- try {
+  try {
     // YOUR CODE HERE
     const { id } = req.params;
 
@@ -102,8 +103,7 @@ carController.deleteCar = async (req, res, next) => {
       { new: true }
     );
 
-       if (!deletedCar) throw new AppError(400, "Car is not exist");
-
+    if (!deletedCar) throw new AppError(400, "Car is not exist");
 
     sendResponse(
       res,
