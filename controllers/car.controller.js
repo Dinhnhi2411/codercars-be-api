@@ -7,18 +7,23 @@ const carController = {};
 // CREATE CARS
 
 carController.createCar = async (req, res, next) => {
+  // YOUR CODE HERE
+  const { make, model, transmission_type, size, style, release_date, price } =
+    req.body;
+  const info = {
+    make,
+    model,
+    transmission_type,
+    size,
+    style,
+    release_date,
+    price,
+  };
+  if (!info) throw new AppError(402, "Bad Request", "Create Car Error");
+  // const carObj = new Car(info);
+  // await carObj.save(function (err) {
   try {
-    // YOUR CODE HERE
-    const info = req.body;
-    const carObj = new Car(info);
-    if (!info) throw new AppError(402, "Bad Request", "Create Foo Error");
-
-    await carObj.save(function (err) {
-      if (err) {
-        throw err;
-      }
-      console.log("saved");
-    });
+    const carObj = await Car.create(info);
     sendResponse(res, 200, true, { data: carObj }, null, "Create Car Success");
   } catch (err) {
     // YOUR CODE HERE
@@ -55,13 +60,28 @@ carController.getCars = async (req, res, next) => {
 //  EDIT CARS
 
 carController.editCar = async (req, res, next) => {
-  try {
-    // YOUR CODE HERE
-    const { id } = req.params;
-    const data = req.body;
-    const options = { new: true };
+  const { make, model, transmission_type, size, style, release_date, price } =
+    req.body;
+  const info = {
+    make,
+    model,
+    transmission_type,
+    size,
+    style,
+    release_date,
+    price,
+  };
+  const { id } = req.params;
+ 
+  const options = { new: true };
 
-    const updated = await Car.findByIdAndUpdate(id, data, options);
+  if (!Object.keys(info)) throw new Error("field is invalid");
+
+  try {
+    const updated = await Car.findByIdAndUpdate(id, info, options);
+
+    if (!updated) throw new AppError(400, "Car is not exist");
+
     sendResponse(res, 200, true, { Car: updated }, null, "Update Car Success");
   } catch (err) {
     // YOUR CODE HERE
@@ -72,16 +92,19 @@ carController.editCar = async (req, res, next) => {
 //  DELETE CARS
 
 carController.deleteCar = async (req, res, next) => {
-  try {
+ try {
     // YOUR CODE HERE
     const { id } = req.params;
-    if (!mongoose.isValidObjectId(id))
-      throw new AppError(402, "Bad Request", "Invalid ID");
+
     const deletedCar = await Car.findByIdAndUpdate(
       id,
       { isDeleted: true },
       { new: true }
     );
+
+       if (!deletedCar) throw new AppError(400, "Car is not exist");
+
+
     sendResponse(
       res,
       200,
